@@ -1,0 +1,21 @@
+name: Docker CI
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: self-hosted # Matches your VM runner
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: docker build -t simple-web-app .
+
+      - name: Stop and Run Container
+        run: |
+          docker stop my-web-container || true
+          docker rm my-web-container || true
+          docker run -d --name my-web-container -p 8080:80 simple-web-app
